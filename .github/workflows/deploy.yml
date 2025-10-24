@@ -1,0 +1,35 @@
+name: Deploy to shinyapps.io
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.3.0'
+      
+      - name: Install rsconnect
+        run: |
+          install.packages("rsconnect")
+        shell: Rscript {0}
+      
+      - name: Install app dependencies
+        run: |
+          # Add any packages your app uses
+          install.packages(c("plyr","reshape","ggplot2","magrittr","viridis","shiny"))
+        shell: Rscript {0}
+      
+      - name: Deploy
+        env:
+          SHINYAPPS_USERNAME: ${{ vars.SHINYAPPS_USERNAME }}
+          SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+          SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+        run: Rscript deploy.R
