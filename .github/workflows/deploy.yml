@@ -16,15 +16,21 @@ jobs:
         with:
           r-version: '4.3.0'
       
-      - name: Install rsconnect
+      - name: Install system dependencies
         run: |
-          install.packages("rsconnect")
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+      
+      - name: Install rsconnect and shiny
+        run: |
+          install.packages("rsconnect", repos = "https://cloud.r-project.org/")
+          install.packages("shiny", repos = "https://cloud.r-project.org/")
         shell: Rscript {0}
       
       - name: Install app dependencies
         run: |
-          # Add any packages your app uses
-          install.packages(c("plyr","reshape","ggplot2","magrittr","viridis","shiny"))
+          # Add any other packages your app uses here
+          install.packages(c("ggplot2", "dplyr"), repos = "https://cloud.r-project.org/")
         shell: Rscript {0}
       
       - name: Deploy
